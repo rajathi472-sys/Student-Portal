@@ -74,14 +74,15 @@ WSGI_APPLICATION = 'student_portal.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 from decouple import config
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('student_portal'),      # database name you created
-        'USER': config('root'),                # your MySQL username
-        'PASSWORD': '123@',   # your MySQL password
-        'HOST': config('localhost'),           # where MySQL is running
-        'PORT': config('3306'),                # default MySQL port
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='3306'),
     }
 }
 

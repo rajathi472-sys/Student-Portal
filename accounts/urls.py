@@ -2,12 +2,7 @@ from django.urls import path
 from . import views
 from . import api_views
 from .api_views import (
-    TeacherDeleteAPIView, StudentDeleteAPIView,
-    FeesDeleteAPIView, CGPADeleteAPIView,
-    TeacherUpdateAPIView, TeacherDetailAPIView,
-    StudentDetailAPIView, StudentUpdateAPIView,
-     ManagementLoginAPIView, ManagementCreateAPIView,
-    AdminLoginAPIView, AdminCreateAPIView,
+    StudentLoginAPI, ManagementLoginAPI, LogoutAPI,
 )
 
 urlpatterns = [
@@ -55,42 +50,21 @@ urlpatterns = [
     path('management/teachers/edit/<int:id>/',     views.management_edit_teacher,   name='management_edit_teacher'),
     path('management/teachers/delete/<int:id>/',   views.management_delete_teacher, name='management_delete_teacher'),
 
-# Management
-   # path('admin-panel/management/',               views.admin_create_management,  name='admin_create_management'),
-    #path('admin-panel/management/<int:mgmt_id>/delete/', views.admin_delete_management, name='admin_delete_management'),
-    # ── Create endpoints ─────────────────────────────────────────
-    path('api/teacher/create/',           api_views.TeacherCreateAPIView.as_view(),    name='api_teacher_create'),
-    path('api/student/create/',           api_views.StudentCreateAPIView.as_view(),    name='api_student_create'),
-    path('api/fees/create/',              api_views.FeesCreateAPIView.as_view(),       name='api_fees_create'),
-    path('api/cgpa/create/',              api_views.CGPACreateAPIView.as_view(),       name='api_cgpa_create'),
-
-    # ── Auth endpoints ───────────────────────────────────────────
-    path('api/student/login/',            api_views.StudentLoginAPIView.as_view(),     name='api_student_login'),
-    path('api/teacher/login/',            api_views.TeacherLoginAPIView.as_view(),     name='api_teacher_login'),
-    path('api/logout/',                   api_views.LogoutAPIView.as_view(),           name='api_logout'),
-
-    # ── Teacher endpoints ────────────────────────────────────────
-    path('api/teacher/student/<int:id>/', api_views.TeacherStudentAPIView.as_view(),   name='api_teacher_student'),
-    path('api/teacher/<int:id>/',         TeacherDetailAPIView.as_view(),              name='api_teacher_detail'),
-    path('api/teacher/<int:id>/update/',  TeacherUpdateAPIView.as_view(),              name='api_teacher_update'),
-    path('api/teacher/<str:id>/delete/',  TeacherDeleteAPIView.as_view(),              name='api_teacher_delete'),
+# ── Auth endpoints ───────────────────────────────────────────
+    path('api/student/login/',            api_views.StudentLoginAPI.as_view(),         name='api_student_login'),
+    path('api/management/login/',         api_views.ManagementLoginAPI.as_view(),      name='api_management_login'),
+    path('api/logout/',                   api_views.LogoutAPI.as_view(),               name='api_logout'),
 
     # ── Student endpoints ────────────────────────────────────────
-    path('api/student/<int:id>/',         StudentDetailAPIView.as_view(),              name='api_student_detail'),
-    path('api/student/<int:id>/update/',  StudentUpdateAPIView.as_view(),              name='api_student_update'),
-    path('api/student/<int:id>/delete/',  StudentDeleteAPIView.as_view(),              name='api_student_delete'),
-
-    # ── Fees & CGPA endpoints ────────────────────────────────────
-    path('api/fees/<int:id>/delete/',     FeesDeleteAPIView.as_view(),                 name='api_fees_delete'),
-    path('api/cgpa/<int:id>/delete/',     CGPADeleteAPIView.as_view(),                 name='api_cgpa_delete'),
-
-    # ── Admin endpoints ──────────────────────────────────────────
-    path('api/admin/create/',             AdminCreateAPIView.as_view(),                name='api_admin_create'),
-    path('api/admin/login/',              AdminLoginAPIView.as_view(),                 name='api_admin_login'),
+    path('api/student/profile/',          api_views.StudentProfileAPI.as_view(),       name='api_student_profile'),
+    path('api/student/cgpa/',             api_views.StudentCGPAAPI.as_view(),          name='api_student_cgpa'),
+    path('api/student/fees/',             api_views.StudentFeesAPI.as_view(),          name='api_student_fees'),
 
     # ── Management endpoints ─────────────────────────────────────
-    path('api/management/create/',        ManagementCreateAPIView.as_view(),           name='api_management_create'),
-    path('api/management/login/',         ManagementLoginAPIView.as_view(),            name='api_management_login'),
-
+    path('api/management/dashboard/',     api_views.ManagementDashboardAPI.as_view(),  name='api_management_dashboard'),
+    path('api/management/students/',      api_views.ManagementStudentListAPI.as_view(),         name='api_management_students'),
+    path('api/management/students/<int:id>/',    api_views.ManagementStudentDetailAPI.as_view(), name='api_management_student_detail'),
+    path('api/management/students/<int:student_id>/fees/', api_views.ManagementStudentFeesAPI.as_view(), name='api_management_student_fees'),
+    path('api/management/reminders/',     api_views.ManagementTriggerRemindersAPI.as_view(),     name='api_management_reminders'),
     
 ]
