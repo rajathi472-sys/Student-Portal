@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+        }
+
+        /* LAYOUT */
+        .container {
+            display: flex;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            background: #34495e;
+            height: 100vh;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            margin-bottom: 5px;
+        }
+
+        .sidebar a:hover {
+            background: #1abc9c;
+        }
+
+        /* MAIN */
+        .main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        /* ✅ Fixed: welcome div properly styled and closed -->
+        .welcome {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        /* CARDS */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            background: #eef2ff;
+            transform: scale(1.03);
+        }
+
+        /* RIGHT PANEL */
+        .right {
+            width: 250px;
+            background: #ecf0f1;
+            padding: 20px;
+            border-left: 2px solid #ccc;
+        }
+
+        .info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* LOGOUT */
+        .logout-container {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+        }
+
+        .logout-btn {
+            background: #2c3e50;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            background: #1a252f;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ✅ Fixed: using url tag -->
+    <div class="logout-container">
+        <a href="{% url 'logout' %}" class="logout-btn">🚪 Logout</a>
+    </div>
+
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <!-- ✅ Fixed: using url tags instead of hardcoded paths -->
+        <div class="sidebar">
+            <a href="{% url 'view_cgpa' %}">📊 CGPA</a>
+            <a href="{% url 'view_fees' %}">💰 Fees</a>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <!-- ✅ Fixed: welcome div is now properly closed -->
+        <div class="main">
+            <div class="welcome">
+                Welcome, {{ student.name }}
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right">
+            <h3>Student Info</h3>
+            <div class="info"><b>Roll No:</b> {{ student.roll_no }}</div>
+            <div class="info"><b>Name:</b> {{ student.name }}</div>
+            <div class="info"><b>Contact:</b> {{ student.contact }}</div>
+            <div class="info"><b>Dept:</b> {{ student.department }}</div>
+            <div class="info"><b>College:</b> {{ student.college }}</div>
+        </div>
+
+    </div>
+
+</body>
+</html>

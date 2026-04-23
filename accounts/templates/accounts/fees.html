@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Fees</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #f5f4f0;
+            --card: #ffffff;
+            --text: #1a1a1a;
+            --muted: #6b6b6b;
+            --border: #e2e2e2;
+            --accent: #1a1a1a;
+            --green: #1a7a4a;
+            --green-bg: #edf7f2;
+            --amber: #b45309;
+            --amber-bg: #fef3e2;
+            --red: #b91c1c;
+            --red-bg: #fef2f2;
+            --blue: #1d4ed8;
+            --blue-bg: #eff6ff;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .page-wrap {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--text); }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        .page-header p {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .status-badge.paid    { background: var(--green-bg); color: var(--green); }
+        .status-badge.pending { background: var(--amber-bg); color: var(--amber); }
+        .status-badge.unpaid  { background: var(--red-bg);   color: var(--red); }
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .card-title {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .fee-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        .fee-item label {
+            display: block;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .fee-item .amount {
+            font-family: 'DM Mono', monospace;
+            font-size: 22px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+        .fee-item .amount.due      { color: var(--red); }
+        .fee-item .amount.paid-amt { color: var(--green); }
+
+        .progress-wrap { margin-top: 1.25rem; }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .progress-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--green);
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+        .msg {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 1.25rem;
+            border-left: 3px solid;
+        }
+        .msg.success { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+        .msg.error   { background: var(--red-bg);   color: var(--red);   border-color: var(--red); }
+
+        .form-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+        .form-group { margin-bottom: 1.1rem; }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="date"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--bg);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus { border-color: var(--accent); }
+
+        .file-upload-area {
+            border: 1.5px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            background: var(--bg);
+            position: relative;
+        }
+        .file-upload-area:hover {
+            border-color: var(--accent);
+            background: #f0efeb;
+        }
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        .upload-icon {
+            width: 36px;
+            height: 36px;
+            margin: 0 auto 10px;
+            background: var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .file-upload-area p    { font-size: 13px; color: var(--muted); }
+        .file-upload-area span { font-size: 12px; color: var(--muted); display: block; margin-top: 4px; }
+        #file-name { margin-top: 10px; font-size: 12px; color: var(--green); font-weight: 500; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn-submit:hover  { opacity: 0.88; }
+        .btn-submit:active { transform: scale(0.99); }
+
+        .submitted-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--amber-bg);
+            border-radius: 12px;
+            border: 1px solid #fde68a;
+        }
+        .submitted-notice .icon { font-size: 20px; }
+        .submitted-notice p     { font-size: 13px; color: var(--amber); line-height: 1.5; }
+        .submitted-notice strong { display: block; font-size: 14px; margin-bottom: 2px; }
+
+        .paid-notice {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--green-bg);
+            border-radius: 12px;
+            border: 1px solid #bbf7d0;
+        }
+        .paid-notice .icon { font-size: 24px; }
+        .paid-notice p     { font-size: 13px; color: var(--green); }
+        .paid-notice strong { display: block; font-size: 15px; margin-bottom: 2px; }
+
+        @media (max-width: 500px) {
+            .fee-grid { grid-template-columns: 1fr 1fr; }
+            .fee-item:last-child { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+
+    <!-- ✅ Fixed: using url tag instead of hardcoded path -->
+    <a href="{% url 'student_dashboard' %}" class="back-link">← Back to dashboard</a>
+
+    <div class="page-header">
+        <h1>Fee Details</h1>
+        <!-- ✅ Fixed: removed &nbsp;·&nbsp; -->
+        <p>{{ student.name }} · Roll No: {{ student.roll_no }}</p>
+
+        {% if fees %}
+            {% if fees.payment_status == 'paid' %}
+                <span class="status-badge paid"><span class="status-dot"></span> Paid</span>
+            {% elif fees.payment_status == 'pending' %}
+                <span class="status-badge pending"><span class="status-dot"></span> Pending Verification</span>
+            {% else %}
+                <span class="status-badge unpaid"><span class="status-dot"></span> Unpaid</span>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="msg {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if fees %}
+
+    <!-- Fee Summary -->
+    <div class="card">
+        <div class="card-title">Fee Summary</div>
+        <div class="fee-grid">
+            <div class="fee-item">
+                <label>Total Fees</label>
+                <div class="amount">₹{{ fees.total_fees }}</div>
+            </div>
+            <div class="fee-item">
+                <label>Paid</label>
+                <div class="amount paid-amt">₹{{ fees.paid_amount }}</div>
+            </div>
+            <div class="fee-item">
+                <label>Due</label>
+                <div class="amount due">₹{{ due_amount }}</div>
+            </div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-label">
+                <span>Payment progress</span>
+                <!-- ✅ Fixed: check total_fees > 0 before widthratio -->
+                {% if fees.total_fees > 0 %}
+                    <span>{% widthratio fees.paid_amount fees.total_fees 100 %}%</span>
+                {% else %}
+                    <span>0%</span>
+                {% endif %}
+            </div>
+            <div class="progress-bar">
+                <!-- ✅ Fixed: safe widthratio with 0 check -->
+                {% if fees.total_fees > 0 %}
+                    {% with percent=fees.paid_amount|floatformat:2 %}
+                         <div class="progress-fill"
+                            style="width: {% widthratio fees.paid_amount fees.total_fees 100 %}%;">
+                        </div>
+                    {% endwith %}
+                {% else %}
+                    <div class="progress-fill" style="width: 0%;"></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload / Status section -->
+    <div class="card">
+        {% if fees.payment_status == 'paid' %}
+            <div class="paid-notice">
+                <div class="icon">✅</div>
+                <p>
+                    <strong>Payment Verified</strong>
+                    Your fee payment has been verified by management. No action needed.
+                </p>
+            </div>
+
+        {% elif fees.payment_status == 'pending' %}
+            <div class="submitted-notice">
+                <div class="icon">⏳</div>
+                <p>
+                    <strong>Receipt Under Review</strong>
+                    Your receipt has been submitted and is being reviewed by management.
+                    {% if fees.payment_ref %}Ref: <b>{{ fees.payment_ref }}</b>{% endif %}
+                </p>
+            </div>
+
+        {% else %}
+            <div class="form-title">Upload Payment Receipt</div>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Payment Reference Number</label>
+                    <input type="text" name="payment_ref" placeholder="e.g. TXN123456789" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Date</label>
+                    <input type="date" name="payment_date" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Receipt Screenshot</label>
+                    <div class="file-upload-area">
+                        <input type="file" name="receipt_image" accept="image/*" required
+                               onchange="document.getElementById('file-name').textContent = this.files[0]?.name || ''">
+                        <div class="upload-icon">📎</div>
+                        <p>Click to upload receipt image</p>
+                        <span>PNG, JPG up to 5MB</span>
+                        <div id="file-name"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit Receipt for Verification</button>
+            </form>
+        {% endif %}
+    </div>
+
+    {% else %}
+        <div class="card">
+            <p style="color: var(--muted); font-size: 14px; text-align: center; padding: 1rem 0;">
+                No fee record found. Please contact the management
+            </p>
+        </div>
+    {% endif %}
+
+</div>
+</body>
+</html>

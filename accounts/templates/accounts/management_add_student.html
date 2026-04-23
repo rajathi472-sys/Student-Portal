@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f5f4f0; --card: #ffffff; --text: #1a1a1a;
+            --muted: #6b6b6b; --border: #e2e2e2;
+            --purple: #534AB7; --purple-bg: #EEEDFE; --purple-dk: #3C3489;
+            --red: #b91c1c; --red-bg: #fef2f2;
+            --green: #1a7a4a; --green-bg: #edf7f2;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* ── Topbar ── */
+        .topbar {
+            background: var(--card); border-bottom: 1px solid var(--border);
+            padding: 0 2rem; height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .topbar-brand { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); }
+        .topbar-right { display: flex; align-items: center; gap: 16px; }
+        .mgmt-name { font-size: 13px; color: var(--muted); }
+        .btn-logout {
+            padding: 6px 14px; background: transparent;
+            border: 1px solid var(--border); border-radius: 8px;
+            font-size: 13px; color: var(--muted); text-decoration: none;
+        }
+        .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+        /* ── Navbar ── */
+        .navbar {
+            background: var(--card); border-bottom: 1px solid var(--border);
+            padding: 0 2rem; display: flex; align-items: center; gap: 4px; height: 46px;
+        }
+        .nav-link {
+            padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+            color: var(--muted); text-decoration: none; transition: all 0.2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .nav-link:hover { background: var(--bg); color: var(--text); }
+        .nav-link.active { background: var(--purple-bg); color: var(--purple-dk); }
+
+        /* ── Main ── */
+        .main { max-width: 600px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            color: var(--muted); text-decoration: none;
+            font-size: 13px; margin-bottom: 1.5rem;
+        }
+        .back-link:hover { color: var(--text); }
+
+        .page-header { margin-bottom: 1.75rem; }
+        .page-header h1 { font-size: 24px; font-weight: 600; }
+        .page-header p  { font-size: 14px; color: var(--muted); margin-top: 3px; }
+
+        /* ── Messages ── */
+        .msg {
+            padding: 12px 16px; border-radius: 10px;
+            font-size: 13px; margin-bottom: 1.25rem; border-left: 3px solid;
+        }
+        .msg.success { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+        .msg.error   { background: var(--red-bg);   color: var(--red);   border-color: var(--red); }
+
+        /* ── Form ── */
+        .form-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 1.75rem;
+        }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 500;
+            margin-bottom: 6px; color: var(--text);
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%; padding: 10px 14px;
+            border: 1px solid var(--border); border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 14px;
+            background: var(--bg); color: var(--text);
+            outline: none; transition: border-color 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus { border-color: var(--purple); background: white; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+        .divider {
+            border: none; border-top: 1px solid var(--border);
+            margin: 1.5rem 0;
+        }
+
+        .section-label {
+            font-size: 12px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.8px; color: var(--muted); margin-bottom: 1rem;
+        }
+
+        .btn-row { display: flex; gap: 10px; margin-top: 1.5rem; }
+        .btn-primary {
+            flex: 1; padding: 11px; background: var(--purple); color: white;
+            border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+            font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.85; }
+        .btn-cancel {
+            flex: 1; padding: 11px; background: transparent;
+            border: 1px solid var(--border); border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 14px;
+            color: var(--muted); text-decoration: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-cancel:hover { border-color: var(--text); color: var(--text); }
+
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Topbar ── -->
+<div class="topbar">
+    <div class="topbar-brand">
+        <div class="brand-dot"></div>
+        Student Portal
+    </div>
+    <div class="topbar-right">
+        <span class="mgmt-name">{{ management.name }}</span>
+        <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+    </div>
+</div>
+
+<!-- ── Navbar ── -->
+<div class="navbar">
+    <a href="{% url 'management_dashboard' %}"  class="nav-link">🏠 Dashboard</a>
+    <a href="{% url 'management_students' %}"   class="nav-link active">👨‍🎓 Manage Students</a>
+    <a href="{% url 'management_teachers' %}"   class="nav-link">👨‍🏫 Manage Teachers</a>
+    <a href="{% url 'trigger_reminders' %}"     class="nav-link">🔔 Send Reminders</a>
+</div>
+
+<div class="main">
+
+    <a href="{% url 'management_students' %}" class="back-link">← Back to Students</a>
+
+    <div class="page-header">
+        <h1>Add New Student</h1>
+        <p>Fill in the details to register a new student</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="msg {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="form-card">
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- ── Basic Info ── -->
+            <p class="section-label">Basic Information</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Roll Number</label>
+                    <input type="text" name="roll_no"
+                           placeholder="e.g. 72072210601" required>
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name"
+                           placeholder="e.g. Rahul Kumar" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="text" name="contact"
+                           maxlength="10" placeholder="10 digit number" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email"
+                           placeholder="student@email.com">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Department</label>
+                    <input type="text" name="department"
+                           placeholder="e.g. CSE" required>
+                </div>
+                <div class="form-group">
+                    <label>College</label>
+                    <input type="text" name="college"
+                           placeholder="e.g. Hindusthan College" required>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <!-- ── Login Credentials ── -->
+            <p class="section-label">Login Credentials</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password"
+                           placeholder="Set login password" required>
+                    <p class="hint">
+                        Student will use this password to login
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label>Assign Teacher</label>
+                    <select name="teacher_id" required>
+                        <option value="">Select a teacher</option>
+                        {% for teacher in teachers %}
+                            <option value="{{ teacher.id }}">
+                                {{ teacher.name }} — {{ teacher.department }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <a href="{% url 'management_students' %}" class="btn-cancel">
+                    Cancel
+                </a>
+                <button type="submit" class="btn-primary">
+                    Add Student
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
