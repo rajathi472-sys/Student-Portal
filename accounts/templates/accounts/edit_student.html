@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Student</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; margin: 0; }
+        h2   { color: #2c3e50; margin-bottom: 4px; }
+        h3   { color: #2c3e50; margin-bottom: 14px; border-bottom: 2px solid #5b86e5; padding-bottom: 6px; }
+        h4   { color: #5b86e5; margin: 14px 0 8px 0; }
+
+        .section {
+            background: white; padding: 24px;
+            margin-bottom: 24px; border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .info-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px; margin-bottom: 16px;
+        }
+        .info-grid label { font-size: 12px; color: #888; display: block; margin-bottom: 4px; }
+        .info-grid input {
+            width: 100%; padding: 8px 10px;
+            border: 1px solid #ddd; border-radius: 6px; font-size: 14px;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        th { background: #5b86e5; color: white; padding: 10px 12px; text-align: center; font-size: 13px; }
+        td { padding: 8px 10px; text-align: center; border-bottom: 1px solid #eee; font-size: 13px; }
+        tr:nth-child(even) { background: #f7f9ff; }
+
+        td input[type="number"] {
+            width: 70px; padding: 5px 6px;
+            border: 1px solid #ddd; border-radius: 5px; font-size: 13px; text-align: center;
+        }
+        td select {
+            padding: 5px 6px; border: 1px solid #ddd;
+            border-radius: 5px; font-size: 13px; background: white;
+        }
+
+        .add-table th { background: #2c3e50; }
+        .add-table td { background: #fafafa; padding: 8px 10px; }
+        .add-table input, .add-table select {
+            width: 100%; padding: 7px 8px;
+            border: 1px solid #ddd; border-radius: 5px; font-size: 13px;
+        }
+
+        .btn { padding: 7px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .btn-primary { background: #5b86e5; color: white; }
+        .btn-primary:hover { background: #3a6bd4; }
+        .btn-danger  { background: #e74c3c; color: white; }
+        .btn-danger:hover  { background: #c0392b; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #1e8449; }
+        .btn-lg { padding: 10px 22px; font-size: 14px; }
+
+        .cgpa-badge {
+            display: inline-block; background: #5b86e5; color: white;
+            padding: 8px 22px; border-radius: 20px; font-size: 20px;
+            font-weight: bold; margin-bottom: 16px;
+        }
+        .sem-badge {
+            display: inline-block; background: #eef2ff; color: #5b86e5;
+            padding: 4px 12px; border-radius: 12px; font-size: 13px;
+            font-weight: bold; margin-left: 8px;
+        }
+        .type-badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+        .type-theory { background: #dbeafe; color: #1e40af; }
+        .type-lab    { background: #dcfce7; color: #166534; }
+
+        .sem-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+        .sem-row label { font-size: 14px; font-weight: bold; color: #2c3e50; min-width: 90px; }
+        .sem-row input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 120px; }
+
+        .subject-no { font-weight: bold; color: #5b86e5; width: 30px; }
+
+        .grade-ref {
+            display: flex; gap: 10px; flex-wrap: wrap;
+            margin-bottom: 16px; padding: 10px 16px;
+            background: #f8faff; border-radius: 8px; border: 1px solid #e0e8ff; font-size: 13px;
+        }
+
+        .back-link { display: inline-block; margin-bottom: 20px; color: #5b86e5; text-decoration: none; font-size: 14px; }
+        .back-link:hover { text-decoration: underline; }
+
+        .logout-container { position: fixed; top: 15px; right: 20px; }
+        .logout-btn { background: #e74c3c; color: white; padding: 8px 16px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px; }
+        .logout-btn:hover { background: #c0392b; }
+
+        .messages { margin-bottom: 16px; }
+        .msg { padding: 10px 16px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; }
+        .msg-success { background: #d4edda; color: #155724; }
+        .msg-error   { background: #f8d7da; color: #721c24; }
+
+        hr.divider { border: none; border-top: 1px dashed #ddd; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+<div class="logout-container">
+    <a href="/logout/" class="logout-btn">Logout</a>
+</div>
+
+<a href="{% url 'teacher_dashboard' %}" class="back-link">← Back to Dashboard</a>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="msg {% if message.tags == 'error' %}msg-error{% else %}msg-success{% endif %}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<h2>{{ student.name }}</h2>
+<p style="color:#888; margin-top:0;">
+    Roll No: {{ student.roll_no }} &nbsp;|&nbsp;
+    {{ student.department }} &nbsp;|&nbsp;
+    {{ student.college }}
+</p>
+
+<!-- ── STUDENT INFO ─────────────────────────────── -->
+<div class="section">
+    <h3>Student Details</h3>
+
+    <div class="info-grid">
+        <div>
+            <label>Roll No</label>
+            <p>{{ student.roll_no }}</p>
+        </div>
+
+        <div>
+            <label>Name</label>
+            <p>{{ student.name }}</p>
+        </div>
+
+        <div>
+            <label>Contact</label>
+            <p>{{ student.contact }}</p>
+        </div>
+
+        <div>
+            <label>Department</label>
+            <p>{{ student.department }}</p>
+        </div>
+
+        <div>
+            <label>College</label>
+            <p>{{ student.college }}</p>
+        </div>
+
+        <div>
+            <label>Email</label>
+            <p>{{ student.email }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- ── CGPA ─────────────────────────────────────── -->
+<div class="section">
+    <h3>CGPA</h3>
+
+    <div class="cgpa-badge">Overall CGPA: {{ overall_cgpa }}</div>
+
+    <!-- Grade Reference -->
+    <div class="grade-ref">
+        <strong>Grade Scale: &nbsp;</strong>
+        <span>O = 10</span><span>A+ = 9</span><span>A = 8</span>
+        <span>B+ = 7</span><span>B = 6</span><span>C = 5</span><span>F = 0</span>
+    </div>
+
+    <!-- ── EXISTING RECORDS — inline edit ──────── -->
+    {% if semesters %}
+        {% for sem, data in semesters.items %}
+        <h4>Semester {{ sem }} <span class="sem-badge">CGPA: {{ data.cgpa }}</span></h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Subject</th>
+                    <th>Type</th>
+                    <th>Grade</th>
+                    <th>Credits</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in data.subjects %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ c.subject }}</strong></td>
+
+                    <!-- UPDATE FORM — inline -->
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="type" value="update_cgpa">
+                        <input type="hidden" name="id"   value="{{ c.id }}">
+
+                        <td>
+                            <select name="sub_type">
+                                <option value="theory" {% if c.sub_type == 'theory' %}selected{% endif %}>Theory</option>
+                                <option value="lab"    {% if c.sub_type == 'lab'    %}selected{% endif %}>Lab</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="grade">
+                                {% for g in grade_choices %}
+                                <option value="{{ g }}" {% if c.grade == g %}selected{% endif %}>{{ g }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="credits" value="{{ c.credits }}" step="0.5" min="0">
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </td>
+                    </form>
+
+                    <!-- DELETE FORM -->
+                    <td>
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="type" value="delete_cgpa">
+                            <input type="hidden" name="id"   value="{{ c.id }}">
+                            <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('Delete {{ c.subject }}?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+    {% else %}
+        <p style="color:gray; font-style:italic;">No grades added yet.</p>
+    {% endif %}
+
+    <hr class="divider">
+
+    <!-- ── ADD NEW SUBJECTS ─────────────────────── -->
+    <h4>Add New Semester or add new subjects</h4>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="add_cgpa">
+
+        <div class="sem-row">
+            <label>Semester</label>
+            <input type="text" name="semester" placeholder="e.g. 1" required>
+        </div>
+
+        <table class="add-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Subject Name</th>
+                    <th>Type</th>
+                    <th>Grade</th>
+                    <th>Credits</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in "1234" %}
+                <tr>
+                    <td class="subject-no">{{ forloop.counter }}</td>
+                    <td><input type="text" name="subject" placeholder="Theory Subject {{ forloop.counter }}"></td>
+                    <td>
+                        <select name="sub_type">
+                            <option value="theory">Theory</option>
+                            <option value="lab">Lab</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="grade">
+                            <option value="">-- Grade --</option>
+                            <option value="O">O (10)</option>
+                            <option value="A+">A+ (9)</option>
+                            <option value="A">A (8)</option>
+                            <option value="B+">B+ (7)</option>
+                            <option value="B">B (6)</option>
+                            <option value="C">C (5)</option>
+                            <option value="F">F (0)</option>
+                        </select>
+                    </td>
+                    <td><input type="number" name="credits" placeholder="Credits" step="0.5" min="0"></td>
+                </tr>
+                {% endfor %}
+                <!-- 2 Lab rows -->
+                {% for i in "12" %}
+                <tr>
+                    <td class="subject-no" style="color:#27ae60;">L{{ forloop.counter }}</td>
+                    <td><input type="text" name="subject" placeholder="Lab Subject {{ forloop.counter }}"></td>
+                    <td>
+                        <select name="sub_type">
+                            <option value="lab">Lab</option>
+                            <option value="theory">Theory</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="grade">
+                            <option value="">-- Grade --</option>
+                            <option value="O">O (10)</option>
+                            <option value="A+">A+ (9)</option>
+                            <option value="A">A (8)</option>
+                            <option value="B+">B+ (7)</option>
+                            <option value="B">B (6)</option>
+                            <option value="C">C (5)</option>
+                            <option value="F">F (0)</option>
+                        </select>
+                    </td>
+                    <td><input type="number" name="credits" placeholder="Credits" step="0.5" min="0"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <button type="submit" class="btn btn-success btn-lg">Save All Subjects</button>
+    </form>
+</div>
+
+</body>
+</html>

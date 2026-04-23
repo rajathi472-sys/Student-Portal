@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Login</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            background: #f9f9f9;
+            padding: 30px;
+            width: 320px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1a252f;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+        }
+        .logout-container {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+}
+
+.logout-btn {
+    background: #2c3e50;
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.logout-btn:hover {
+    background: #1a252f;
+}
+    </style>
+</head>
+
+<body>
+   <div class="logout-container">
+    <a href="/logout/" class="logout-btn">🚪 Logout</a>
+</div>
+
+<div class="login-box">
+    <h2>👩‍🏫 Teacher Login</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Teacher ID</label>
+        <input type="text" name="teacher_id" placeholder="Enter Teacher ID" required>
+
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter Password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    {% for message in messages %}
+        <p class="error">{{ message }}</p>
+    {% endfor %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Fees Detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:        #f5f4f0;
+            --card:      #ffffff;
+            --text:      #1a1a1a;
+            --muted:     #6b6b6b;
+            --border:    #e2e2e2;
+            --purple:    #534AB7;
+            --purple-bg: #EEEDFE;
+            --purple-dk: #3C3489;
+            --green:     #1a7a4a;
+            --green-bg:  #edf7f2;
+            --amber:     #b45309;
+            --amber-bg:  #fef3e2;
+            --red:       #b91c1c;
+            --red-bg:    #fef2f2;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .topbar-brand {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); }
+        .btn-logout {
+            padding: 6px 14px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            color: var(--muted);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+        .main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--text); }
+
+        .profile-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .profile-left { display: flex; align-items: center; gap: 14px; }
+        .avatar {
+            width: 52px; height: 52px;
+            border-radius: 12px;
+            background: var(--purple-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 20px;
+            color: var(--purple-dk);
+            flex-shrink: 0;
+        }
+        .profile-name { font-size: 18px; font-weight: 600; margin-bottom: 3px; }
+        .profile-meta { font-size: 13px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
+        .profile-meta span::before { content: '·'; margin-right: 6px; }
+        .profile-meta span:first-child::before { content: ''; margin: 0; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+        .badge.paid    { background: var(--green-bg); color: var(--green); }
+        .badge.pending { background: var(--amber-bg); color: var(--amber); }
+        .badge.unpaid  { background: var(--red-bg);   color: var(--red);   }
+        .badge.no-fees { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+
+        .msg {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 1.25rem;
+            border-left: 3px solid;
+        }
+        .msg.success { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+        .msg.error   { background: var(--red-bg);   color: var(--red);   border-color: var(--red); }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .card-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .fee-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .fee-item label {
+            display: block;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .fee-item .amount {
+            font-family: 'DM Mono', monospace;
+            font-size: 20px;
+            font-weight: 500;
+        }
+        .fee-item .amount.due    { color: var(--red);   }
+        .fee-item .amount.paid-c { color: var(--green); }
+
+        .progress-wrap { margin-top: 0.25rem; }
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .progress-bar  { height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--green); border-radius: 10px; }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .receipt-img {
+            width: 100%;
+            max-height: 260px;
+            object-fit: contain;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .receipt-img:hover { opacity: 0.85; }
+        .view-full {
+            display: block;
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 8px;
+            text-decoration: none;
+        }
+        .view-full:hover { color: var(--text); }
+        .no-receipt {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            border-radius: 10px;
+            border: 1px dashed var(--border);
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-key   { color: var(--muted); }
+        .detail-value {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: right;
+            max-width: 55%;
+            word-break: break-all;
+        }
+        .detail-value.green { color: var(--green); font-size: 14px; }
+        .detail-value.red   { color: var(--red);   font-size: 14px; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .form-group input[type="number"],
+        .form-group input[type="date"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Mono', monospace;
+            font-size: 14px;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus { border-color: var(--purple); }
+
+        /* ✅ Error hint below input */
+        .input-hint {
+            font-size: 11px;
+            color: var(--red);
+            margin-top: 4px;
+            display: none;
+        }
+
+        .btn-row { display: flex; gap: 10px; }
+        .btn {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-green  { background: var(--green);  color: white; }
+        .btn-red    { background: var(--red-bg); color: var(--red); border: 1px solid #fca5a5; }
+        .btn-purple { background: var(--purple); color: white; }
+        .btn-green:hover, .btn-purple:hover { opacity: 0.88; }
+        .btn-red:hover { opacity: 0.8; }
+
+        .notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid;
+        }
+        .notice.paid-n   { background: var(--green-bg); border-color: #bbf7d0; color: var(--green); }
+        .notice.unpaid-n { background: var(--bg); border-color: var(--border); color: var(--muted); }
+        .notice-icon  { font-size: 20px; flex-shrink: 0; }
+        .notice-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+        .notice-body  { font-size: 13px; line-height: 1.5; }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.25rem;
+        }
+        .section-divider span { font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+        .divider-line { flex: 1; height: 1px; background: var(--border); }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img  { max-width: 100%; max-height: 90vh; border-radius: 12px; }
+        .lightbox-close {
+            position: fixed;
+            top: 1rem; right: 1.5rem;
+            color: white; font-size: 28px;
+            cursor: pointer; line-height: 1;
+        }
+
+        @media (max-width: 600px) {
+            .two-col  { grid-template-columns: 1fr; }
+            .fee-grid { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightbox-img" src="" alt="Receipt">
+</div>
+
+<!-- Topbar -->
+<div class="topbar">
+    <div class="topbar-brand">
+        <div class="brand-dot"></div>
+        Student Portal
+    </div>
+    <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+</div>
+
+<div class="main">
+
+    <a href="{% url 'management_dashboard' %}" class="back-link">← Back to dashboard</a>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="msg {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Student profile -->
+    <div class="profile-card">
+        <div class="profile-left">
+            <div class="avatar">{{ student.name|first|upper }}</div>
+            <div>
+                <div class="profile-name">{{ student.name }}</div>
+                <div class="profile-meta">
+                    <span>{{ student.roll_no }}</span>
+                    <span>{{ student.department }}</span>
+                    <span>{{ student.college }}</span>
+                    <span>{{ student.email|default:"No email" }}</span>
+                </div>
+            </div>
+        </div>
+        {% if fees %}
+            {% if fees.payment_status == 'paid' %}
+                <span class="badge paid"><span class="badge-dot"></span>Paid</span>
+            {% elif fees.payment_status == 'pending' %}
+                <span class="badge pending"><span class="badge-dot"></span>Pending Verification</span>
+            {% else %}
+                <span class="badge unpaid"><span class="badge-dot"></span>Unpaid</span>
+            {% endif %}
+        {% else %}
+            <span class="badge no-fees">No fee record</span>
+        {% endif %}
+    </div>
+
+    <!-- ── CASE 1: No fees — SET FEES form ── -->
+    {% if not fees %}
+    <div class="card">
+        <div class="card-title">Set Student Fees</div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Total Fees Amount (₹)</label>
+                    <!-- ✅ Fixed: max 7 digits, limitDigits() defined in JS -->
+                    <input type="number" name="total_fees"
+                           placeholder="e.g. 50000"
+                           min="0" max="9999999"
+                           oninput="limitDigits(this, 7)"
+                           required>
+                    <div class="input-hint" id="hint-set-fees">Max 7 digits allowed (₹9,999,999)</div>
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <!-- ✅ Fixed: date limit not beyond 2026 -->
+                    <input type="date" name="due_date"
+                           min="2024-01-01" max="2026-12-31"
+                           required>
+                </div>
+            </div>
+            <button type="submit" name="action" value="set_fees"
+                    class="btn btn-purple" style="width:100%">
+                Set Fees for This Student
+            </button>
+        </form>
+    </div>
+
+    {% else %}
+
+    <!-- ── CASE 2: Fees record exists ── -->
+
+    <!-- Fee summary -->
+    <div class="card">
+        <div class="card-title">Fee Summary</div>
+        <div class="fee-grid">
+            <div class="fee-item">
+                <label>Total Fees</label>
+                <div class="amount">₹{{ fees.total_fees }}</div>
+            </div>
+            <div class="fee-item">
+                <label>Paid</label>
+                <div class="amount paid-c">₹{{ fees.paid_amount }}</div>
+            </div>
+            <div class="fee-item">
+                <label>Due</label>
+                <div class="amount due">₹{{ due_amount }}</div>
+            </div>
+            <div class="fee-item">
+                <label>Due Date</label>
+                <div class="amount" style="font-size:15px">{{ fees.due_date|default:"—" }}</div>
+            </div>
+        </div>
+
+        <!-- ✅ Fixed: widthratio crash if total_fees = 0 -->
+        <div class="progress-wrap">
+            <div class="progress-labels">
+                <span>Payment progress</span>
+                {% if fees.total_fees > 0 %}
+                    <span>{% widthratio fees.paid_amount fees.total_fees 100 %}%</span>
+                {% else %}
+                    <span>0%</span>
+                {% endif %}
+            </div>
+            <div class="progress-bar">
+                {% if fees.total_fees > 0 %}
+                    <div class="progress-fill" style="width: {% widthratio fees.paid_amount fees.total_fees 100 %}%"></div>
+                {% else %}
+                    <div class="progress-fill" style="width: 0%"></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Update fees -->
+    <div class="card">
+        <div class="card-title">Update Fees</div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Total Fees Amount (₹)</label>
+                    <!-- ✅ Fixed: max 7 digits added -->
+                    <input type="number" name="total_fees"
+                           value="{{ fees.total_fees }}"
+                           min="0" max="9999999"
+                           oninput="limitDigits(this, 7)"
+                           required>
+                    <div class="input-hint" id="hint-update-fees">Max 7 digits allowed (₹9,999,999)</div>
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <!-- ✅ Fixed: date limit not beyond 2026 -->
+                    <input type="date" name="due_date"
+                           value="{{ fees.due_date|date:'Y-m-d' }}"
+                           min="2024-01-01" max="2026-12-31"
+                           required>
+                </div>
+            </div>
+            <button type="submit" name="action" value="update_fees"
+                    class="btn btn-purple" style="width:100%">
+                Update Fees
+            </button>
+        </form>
+    </div>
+
+    <!-- Receipt + Details (only if pending) -->
+    {% if fees.payment_status == 'pending' %}
+
+    <div class="section-divider">
+        <span>Payment verification</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="two-col">
+
+        <!-- Receipt image -->
+        <div class="card">
+            <div class="card-title">Receipt Screenshot</div>
+            {% if fees.receipt_image %}
+                <img class="receipt-img"
+                     src="{{ fees.receipt_image.url }}"
+                     alt="Receipt"
+                     onclick="openLightbox('{{ fees.receipt_image.url }}')">
+                <a href="{{ fees.receipt_image.url }}" target="_blank" class="view-full">
+                    Open full size ↗
+                </a>
+            {% else %}
+                <div class="no-receipt">No receipt image uploaded</div>
+            {% endif %}
+        </div>
+
+        <!-- Payment details -->
+        <div class="card">
+            <div class="card-title">Payment Details</div>
+            <div class="detail-row">
+                <span class="detail-key">Reference No.</span>
+                <span class="detail-value">{{ fees.payment_ref|default:"—" }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-key">Payment Date</span>
+                <span class="detail-value">{{ fees.payment_date|default:"—" }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-key">Total Fees</span>
+                <span class="detail-value green">₹{{ fees.total_fees }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-key">Amount Paid</span>
+                <span class="detail-value">₹{{ fees.paid_amount }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-key">Due Amount</span>
+                <span class="detail-value red">₹{{ due_amount }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-key">Student Email</span>
+                <span class="detail-value">{{ student.email|default:"—" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approve / Reject -->
+    <div class="card">
+        <div class="card-title">Verify Payment</div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Confirm Paid Amount (₹)</label>
+                <!-- ✅ Fixed: max 7 digits, removed step="0.01" since fees are integers -->
+                <input type="number" name="paid_amount"
+                       value="{{ fees.total_fees }}"
+                       min="0" max="9999999"
+                       oninput="limitDigits(this, 7)"
+                       required>
+                <div class="input-hint" id="hint-paid">Max 7 digits allowed (₹9,999,999)</div>
+            </div>
+            <div class="btn-row">
+                <button type="submit" name="action" value="approve" class="btn btn-green">
+                    ✓ Approve Payment
+                </button>
+                <button type="submit" name="action" value="reject" class="btn btn-red"
+                        onclick="return confirm('Reject this payment receipt?')">
+                    ✕ Reject Receipt
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% elif fees.payment_status == 'paid' %}
+
+    <div class="notice paid-n">
+        <div class="notice-icon">✅</div>
+        <div>
+            <div class="notice-title">Payment Verified</div>
+            <div class="notice-body">
+                This student's payment has been approved.
+                {% if fees.payment_ref %}Reference: <b>{{ fees.payment_ref }}</b>{% endif %}
+                {% if fees.payment_date %} on {{ fees.payment_date }}{% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="notice unpaid-n">
+        <div class="notice-icon">⏳</div>
+        <div>
+            <div class="notice-title">Waiting for Student Receipt</div>
+            <div class="notice-body">
+                Fees have been set. Waiting for the student to upload their payment receipt.
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+    {% endif %}
+
+</div>
+
+<script>
+    // ✅ Fixed: limitDigits() is now properly defined
+    function limitDigits(input, maxDigits) {
+        const value = input.value.replace(/\D/g, ''); // remove non-digits
+        if (value.length > maxDigits) {
+            input.value = parseInt(value.substring(0, maxDigits));
+        }
+    }
+
+    function openLightbox(url) {
+        document.getElementById('lightbox-img').src = url;
+        document.getElementById('lightbox').classList.add('open');
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeLightbox();
+    });
+</script>
+
+</body>
+</html>

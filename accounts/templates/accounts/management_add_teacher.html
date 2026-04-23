@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Teacher</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f5f4f0; --card: #fff; --text: #1a1a1a; --muted: #6b6b6b;
+            --border: #e2e2e2; --purple: #534AB7; --purple-bg: #EEEDFE; --purple-dk: #3C3489;
+            --green: #1a7a4a; --green-bg: #edf7f2; --red: #b91c1c; --red-bg: #fef2f2;
+            --teal: #0F6E56; --teal-bg: #E1F5EE;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        .topbar { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+        .topbar-brand { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); }
+        .btn-logout { padding: 6px 14px; background: transparent; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--muted); text-decoration: none; transition: all 0.2s; }
+        .btn-logout:hover { border-color: var(--red); color: var(--red); }
+        .main { max-width: 680px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); text-decoration: none; margin-bottom: 1.5rem; transition: color 0.2s; }
+        .back-link:hover { color: var(--text); }
+        .page-header { margin-bottom: 1.75rem; }
+        .page-header h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; }
+        .page-header p  { font-size: 14px; color: var(--muted); margin-top: 4px; }
+        .msg { padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 1.25rem; border-left: 3px solid; }
+        .msg.success { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+        .msg.error   { background: var(--red-bg);   color: var(--red);   border-color: var(--red); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem; }
+        .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { margin-bottom: 1.1rem; }
+        .form-group label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--bg); color: var(--text); outline: none; transition: border-color 0.2s; }
+        .form-group input:focus { border-color: var(--teal); }
+        .hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+        .password-notice { background: var(--teal-bg); border: 1px solid #9FE1CB; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--teal); margin-bottom: 1rem; }
+        .btn-submit { width: 100%; padding: 13px; background: var(--teal); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 0.5rem; transition: opacity 0.2s, transform 0.1s; }
+        .btn-submit:hover  { opacity: 0.88; }
+        .btn-submit:active { transform: scale(0.99); }
+        @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div class="topbar-brand"><div class="brand-dot"></div>Student Portal</div>
+    <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+</div>
+<div class="main">
+    <a href="{% url 'management_teachers' %}" class="back-link">← Back to teachers</a>
+    <div class="page-header">
+        <h1>Add New Teacher</h1>
+        <p>Fill in the details to register a new teacher</p>
+    </div>
+    {% if messages %}{% for m in messages %}
+        <div class="msg {% if m.tags == 'error' %}error{% else %}success{% endif %}">{{ m }}</div>
+    {% endfor %}{% endif %}
+    <div class="card">
+        <div class="password-notice">
+            Password will be automatically hashed and stored securely.
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="section-label">Teacher Information</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" placeholder="e.g. Kumar S" required>
+                </div>
+                <div class="form-group">
+                    <label>Teacher ID</label>
+                    <input type="text" name="teacher_id" placeholder="e.g. T001" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" name="department" placeholder="e.g. Computer Science" required>
+            </div>
+            <div class="section-label" style="margin-top:0.25rem">Login Credentials</div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Set a login password" required>
+                <div class="hint">Minimum 6 characters. Will be hashed automatically.</div>
+            </div>
+            <button type="submit" class="btn-submit">Add Teacher</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
