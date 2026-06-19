@@ -11,7 +11,7 @@ from django.conf import settings
 from .models import Student, Fees, CGPA, Teacher, Management
 from .serializers import (
     StudentSerializer, FeesSerializer, CGPASerializer,
-    TeacherSerializer, ReceiptSubmitSerializer,
+    ReceiptSubmitSerializer,
     StudentLoginSerializer, ManagementLoginSerializer,
 )
 

@@ -21,12 +21,14 @@ urlpatterns = [
     path('management/dashboard/',         views.management_dashboard,          name='management_dashboard'),
     path('management/reminders/',         views.trigger_reminders,             name='trigger_reminders'),
     path('management/student/<int:student_id>/fees/', views.management_student_fees_detail, name='management_student_fees_detail'),
+    #path('student/fees/', views.student_fees, name='view_fees'),
     # ── Add these URL patterns to your accounts/urls.py ─────────────
 
     #path('admin-panel/login/',                    views.admin_login,              name='admin_login'),
     #path('admin-panel/dashboard/',                views.admin_dashboard,          name='admin_dashboard'),
 
 # Students
+
     #path('admin-panel/students/',                 views.admin_students,           name='admin_students'),
     #path('admin-panel/students/<int:student_id>/edit/',   views.admin_edit_student,   name='admin_edit_student'),
     #path('admin-panel/students/<int:student_id>/delete/', views.admin_delete_student, name='admin_delete_student'),
