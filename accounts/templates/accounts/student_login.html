@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Student Login</title>
+{% extends 'accounts/base.html' %}
 
-    <style>
+{% block title %}Academic Portal{% endblock %}
+
+{% block extra_styles %}
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: white; /* ✅ White background */
+            background: white;
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -67,67 +66,69 @@
             text-align: center;
             margin-top: 10px;
         }
+
         .logout-container {
-    position: fixed;
-    top: 15px;
-    right: 20px;
-}
+            position: fixed;
+            top: 15px;
+            right: 20px;
+        }
 
-.logout-btn {
-    background: #2c3e50;
-    color: white;
-    padding: 8px 15px;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-}
+        .logout-btn {
+            background: #2c3e50;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
 
-.logout-btn:hover {
-    background: #1a252f;
-}
-    </style>
-</head>
+        .logout-btn:hover {
+            background: #1a252f;
+        }
 
-<body>
-    <div class="logout-container">
-    <a href="/logout/" class="logout-btn">🚪 Logout</a>
-</div>
-    
-    
+        /* ✅ reCAPTCHA centering */
+        .captcha-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+{% endblock %}
 
-
+{% block content %}
 
 <div class="login-box">
     <h2>🎓 Student Login</h2>
 
     <form method="POST">
-    {% csrf_token %}
+        {% csrf_token %}
 
-    <div class="form-group">
-        <label>Roll No:</label>
-        <input type="text" name="roll_no" placeholder="Enter Roll No" required>
-    </div>
+        <div class="form-group">
+            <label>Roll No:</label>
+            <input type="text" name="roll_no"
+                   value="{{ request.POST.roll_no }}"
+                   placeholder="Enter Roll No" required>
+        </div>
 
-    <div class="form-group">
-        <label>Password:</label>
-        <input type="password" id="password" name="password" placeholder="Enter Password" required>
-    </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" name="password" placeholder="Enter Password" required>
+        </div>
 
+        <!-- ✅ reCAPTCHA widget -->
+        <div class="captcha-wrapper">
+            {{ form.captcha }}
+        </div>
 
-    <!-- Password Hint -->
-    <p style="font-size:12px; color:gray;">
+        <!-- ✅ reCAPTCHA error -->
         
-    </p>
 
-    <button type="submit">Login</button>
-</form>
+        <button type="submit">Login</button>
+    </form>
 
     {% for message in messages %}
-    <p style="color:red; text-align:center;">{{ message }}</p>
-{% endfor %}
+        <p style="color:red; text-align:center;">{{ message }}</p>
+    {% endfor %}
 
-    
 </div>
 
-</body>
-</html>
+{% endblock %}

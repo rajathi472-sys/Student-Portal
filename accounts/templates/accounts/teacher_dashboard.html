@@ -1,21 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Teacher Dashboard</title>
-    <style>
+{% extends 'accounts/base.html' %}
+
+{% block title %}Academic Portal{% endblock %}
+
+{% block extra_styles %}
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-        }
+    display: block !important;
+    align-items: unset !important;
+    justify-content: unset !important;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
 
         .navbar {
-            background: #2c3e50;
-            color: white;
-            padding: 15px 20px;
-            font-size: 20px;
-            font-weight: bold;
-        }
+    background: #2c3e50;
+    color: white;
+    padding: 15px 20px;
+    padding-right: 120px;
+    font-size: 20px;
+    font-weight: bold;
+    position: relative;
+}
 
         .container {
             padding: 30px;
@@ -68,9 +73,10 @@
         .link:hover { text-decoration: underline; color: #2c5fe5; }
 
         .logout-container {
-            position: fixed;
+            position: absolute;
             top: 15px;
             right: 20px;
+            z-index: 1000;
         }
 
         .logout-btn {
@@ -154,10 +160,9 @@
         }
         .msg.success { background: #edf7f2; color: #1a7a4a; border-color: #1a7a4a; }
         .msg.error   { background: #fef2f2; color: #b91c1c; border-color: #b91c1c; }
-    </style>
-</head>
+{% endblock %}
 
-<body>
+{% block content %}
 
 <div class="navbar">
     Student Portal — Teacher Dashboard
@@ -227,6 +232,4 @@
     </table>
 
 </div>
-
-</body>
-</html>
+{% endblock %}

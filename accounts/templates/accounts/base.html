@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <title>{% block title %}Student Portal{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'accounts/favicon.png' %}">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f6f7f9, #e7e5ea);
+            min-height: 100vh;
+            
+        }
+
+        {% block extra_styles %}{% endblock %}
+    </style>
+</head>
+<body>
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>

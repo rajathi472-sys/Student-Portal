@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from .forms import StudentLoginForm
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.mail import send_mail
 from django.conf import settings
@@ -42,27 +43,37 @@ def home(request):
 # ─────────────────────────────────────────────
 def student_login(request):
     if request.method == 'POST':
-        roll_no  = request.POST['roll_no']
-        password = request.POST['password']
+        form = StudentLoginForm(request.POST)
+
+        if not form.is_valid():
+            # reCAPTCHA failed or field errors
+            messages.error(request, "Please complete the CAPTCHA.")
+            return render(request, 'accounts/student_login.html', {'form': form})
+
+        roll_no  = form.cleaned_data['roll_no']
+        password = form.cleaned_data['password']
 
         if not roll_no.isdigit():
             messages.error(request, "Invalid User ID")
-            return redirect('student_login')
+            return render(request, 'accounts/student_login.html', {'form': form})
 
         try:
             student = Student.objects.get(roll_no=roll_no)
         except Student.DoesNotExist:
             messages.error(request, "Invalid Roll Number")
-            return redirect('student_login')
+            return render(request, 'accounts/student_login.html', {'form': form})
 
         if not check_password(password, student.password):
             messages.error(request, "Invalid Password")
-            return redirect('student_login')
+            return render(request, 'accounts/student_login.html', {'form': form})
 
         request.session['roll_no'] = roll_no
         return redirect('student_dashboard')
 
-    return render(request, 'accounts/student_login.html')
+    else:
+        form = StudentLoginForm()
+
+    return render(request, 'accounts/student_login.html', {'form': form})
 
 
 # ─────────────────────────────────────────────
@@ -823,3 +834,23 @@ def management_delete_teacher(request, id):
 def logout_view(request):
     request.session.flush()
     return redirect('/')
+
+# ─────────────────────────────────────────────
+#  Student Fees
+# ─────────────────────────────────────────────
+def student_fees(request):
+    roll_no = request.session.get('roll_no')
+    if not roll_no:
+        return redirect('student_login')
+
+    student = Student.objects.get(roll_no=roll_no)
+    
+    try:
+        fees = Fees.objects.get(student=student)
+    except Fees.DoesNotExist:
+        fees = None
+
+    return render(request, 'accounts/student_fees.html', {
+        'student': student,
+        'fees': fees,
+    })

@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'rest_framework',
+    'django_recaptcha',
 ]
+RECAPTCHA_PUBLIC_KEY = '6LePXwAtAAAAAG6ZVLnaXaD29ybBqhNzTBh37kEj'
+RECAPTCHA_PRIVATE_KEY = '6LePXwAtAAAAAHUxO50Z_5NAc4KTuRunp0WEUZxb'
 # processing layer handles request and responses
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -118,12 +121,11 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
-STATIC_URL = 'static/'
 import os
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
  
 # ── Media files (receipts uploaded by students) ───────────────────
 MEDIA_URL  = '/media/'
