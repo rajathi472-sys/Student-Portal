@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-51=)w**$2ep*snm9g38(_d_jxc7k4_))ko2!dhm@p#knwej0dr'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True 
@@ -41,8 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_recaptcha',
 ]
-RECAPTCHA_PUBLIC_KEY = '6LePXwAtAAAAAG6ZVLnaXaD29ybBqhNzTBh37kEj'
-RECAPTCHA_PRIVATE_KEY = '6LePXwAtAAAAAHUxO50Z_5NAc4KTuRunp0WEUZxb'
+
 # processing layer handles request and responses
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'student_portal.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-from decouple import config
+
 
 DATABASES = {
     'default': {
@@ -134,6 +134,7 @@ EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST          = 'smtp.gmail.com'
 EMAIL_PORT          = 587
 EMAIL_USE_TLS       = True
-EMAIL_HOST_USER     = 'rasrajathi472@gmail.com'      # your Gmail
-EMAIL_HOST_PASSWORD = 'paka lonx ccnz bdka'        # 16-char app password
-DEFAULT_FROM_EMAIL  = 'rasrajathi472@gmail.com'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+RECAPTCHA_PUBLIC_KEY = config('RECAPTCHA_PUBLIC_KEY')
+RECAPTCHA_PRIVATE_KEY = config('RECAPTCHA_PRIVATE_KEY')
