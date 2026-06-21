@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_recaptcha',
 ]
-
 # processing layer handles request and responses
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,6 +75,7 @@ WSGI_APPLICATION = 'student_portal.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+from decouple import config
 
 
 DATABASES = {
@@ -136,5 +136,6 @@ EMAIL_PORT          = 587
 EMAIL_USE_TLS       = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
 RECAPTCHA_PUBLIC_KEY = config('RECAPTCHA_PUBLIC_KEY')
 RECAPTCHA_PRIVATE_KEY = config('RECAPTCHA_PRIVATE_KEY')
